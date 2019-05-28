@@ -1,12 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+##Datos de prueba:
+
+E=["a","b"]
+'''L=[("Q0","a","Q2"),
+   ("Q0","b","Q0"),
+   ("Q0","","Q1"),
+   ("Q1","a","Q4"),
+   ("Q1","b","Q1"),
+   ("Q2","a","Q0"),
+   ("Q3","a","Q1"),
+   ("Q4","a","Q4")]'''
+#Ejemplo con el ejercicio de la prueba
+L=[("Q0", "a", "Q2"),
+    ("Q0", "b", "Q0"),
+    ("Q0", "", "Q1"),
+    ("Q2", "a", "Q0"),
+    ("Q4", "a" "Q3"),
+    ("Q1", "b", "Q1"),
+    ("Q3", "a", "Q1"),
+    ("Q1", "", "Q4"),
+    ("Q1", "b", "Q1")]
+K=["Q0","Q1","Q2","Q3","Q4"]
+S=["Q0"]
+F=["Q1"]
+
+M=[K,E,S,L,F]
+
+tabla = {}
+
 def combinarListas(l1, l2):
+    #Se toman dos listas y se comprueba que la segunda sea del tipo "lista" antes de agregarlo
     aux = l1
     if type(l2) == list:
         aux.extend(l2)
     else:
         aux.append(l2)
+    
+    #Se comprueba si es que los elementos de la unión no se repiten
+    #Si el elemento de la unión no existe en la lista final, se agrega
     listaFinal = []
     for elemento in aux:
         try:
@@ -16,17 +49,20 @@ def combinarListas(l1, l2):
     return listaFinal
 
 def conexionesConVacio(lista, nodo):
+    #Devuelve una lista con los nodos que se ven unidos por un vacío al nodo de entrada
     nodosVacios = []
     for tupla in lista:
         if(nodo == tupla[0] and tupla[1] == ""):
-            nodosVacios = combinarListas(nodosVacios, tupla[2])
-            # En caso de multiples conexiones vacías:
-            # nodosVacios = combinarListas(nodosVacios, conexionesConVacio(lista, tupla[2]))
+            nodosVacios = combinarListas(nodosVacios, tupla[2]) 
+            nodosVacios = combinarListas(nodosVacios, conexionesConVacio(lista, tupla[2]))
     return nodosVacios
 
 def procesarNodo(lista, alfabeto, nodo):
+    #Se crea un diccionario para guardar las listas de nodos que se podrán leer con cada carácter
     diccionario = {}
 
+    #Se recorre la lista y compara que el primer elemento de la tupla sea el nodo ingresado
+    #Si el carácter no existe en el diccionario, se crea
     for tupla in lista:
         if (nodo == tupla[0]):
             for caracter in alfabeto:
@@ -47,6 +83,62 @@ def procesarNodo(lista, alfabeto, nodo):
                         diccionario[c] = combinarListas(diccionario[c], e)
     return diccionario
 
+##Transformación de AFND a AFD
+def etiquetas(listaDeNodos):
+    #Devuelve el nombre en string que recibe un nodo
+    aux = ''
+    for elemento in listaDeNodos:
+        aux += elemento
+    return aux
+
+def procesarNodoAFD(nodo, AFND, tabla):
+    #Se crea un elemento de la tabla comenzando por la etiqueta
+    etiquetaNodo = etiquetas(nodo)
+    tabla[etiquetaNodo] = {}
+
+    #Por cada elemento que componga el nodo, se recorre AFND para crear los conjuntos
+    #de nodos a los que se puedan conectar mediante el alfabeto
+    #Luego llama recursivamente la función cambiando el nodo del parámetro
+
+    for elemento in nodo:
+        for caracter in AFND[elemento].keys():
+            if caracter not in tabla[etiquetaNodo]:
+                tabla[etiquetaNodo][caracter] = []
+            tabla[etiquetaNodo][caracter] = combinarListas(tabla[etiquetaNodo][caracter], AFND[elemento][caracter])
+            etiqueta = etiquetas(tabla[etiquetaNodo][caracter])
+            if etiqueta not in tabla:
+                procesarNodoAFD(tabla[etiquetaNodo][caracter], AFND, tabla)
+    return tabla
+
+def AFD(AFND, lista, nodo, alfabeto):
+    #Se define el nodo inicial
+    tabla = {}
+    nodoInicial = [nodo]
+    nodoInicial = combinarListas(nodoInicial, conexionesConVacio(lista, nodo))
+
+    #Teniendo el nodo inicial se llama la función recursiva para completar la tabla
+    etiqueta = etiquetas(nodoInicial)
+    procesarNodoAFD(nodoInicial, AFND, tabla)
+
+    haySumidero = False
+
+    #Se comprueba la existencia de cada carácter por nodo en el diccionario
+    for caracter in alfabeto:
+        for nodoAux in tabla:
+            if caracter not in tabla[nodoAux]:
+                tabla[nodoAux][caracter] = ["S"]
+                haySumidero = True
+    
+    #En caso de existir el sumidero, este se agrega
+    if haySumidero:
+        diccionarioAux = {}
+        for caracter in alfabeto:
+            diccionarioAux[caracter] = ["S"]
+        tabla["S"] = diccionarioAux
+    
+    return tabla
+
+##Aquí comienza el main##
 def opciones():
     print("\n\tMenu principal")
     print("(1) ")
@@ -79,32 +171,11 @@ def main():
     print("- Felipe Flores Vivanco\n- Andres Mella\n- Jorge Verdugo Chacon\n- Javiera Vergara Navarro")
     menu()
 
-
-##Datos de prueba:
-
-E=["a","b"]
-L=[("Q0","a","Q2"),
-   ("Q0","b","Q0"),
-   ("Q0","","Q1"),
-   ("Q1","a","Q4"),
-   ("Q1","b","Q1"),
-   ("Q2","a","Q0"),
-   ("Q3","a","Q1"),
-   ("Q4","a","Q4")]
-K=["Q0","Q1","Q2","Q3","Q4"]
-S=["Q0"]
-F=["Q4"]
-
-M=[K,E,S,L,F]
-
-AFD=[]
-
-tabla = {}
-
 for nodo in K:
     aux=procesarNodo(L, E, nodo)
     tabla[nodo] = aux
-    print(aux)
+    #print(aux)
 
+print(AFD(tabla, L, S[0], E))
 #Llamada del main, se comenta por mientras uwu
 #main()
