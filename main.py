@@ -1,3 +1,4 @@
+
 def combinarListas(l1, l2):
     aux = l1
     if type(l2) == list:
@@ -69,3 +70,4 @@ for nodo in K:
     aux=procesarNodo(L, E, nodo)
     tabla[nodo] = aux
     print(aux)
+
