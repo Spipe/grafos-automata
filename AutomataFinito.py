@@ -43,3 +43,8 @@ class AutomataFinito:
             etiqueta += nodo
         return etiqueta
     
+    def mostrarQuintupla(self):
+        
+        print("K: {")
+        print(self.K, sep=" ")
+        print("}")

@@ -34,6 +34,8 @@ class Afd(AutomataFinito):
         nodoInicial = [nodoInicialAfnd]
         nodoInicial = self.combinarListas(nodoInicial, self.conexionesConVacio(nodoInicialAfnd))
 
+        self.s = nodoInicial
+
         #Teniendo el nodo inicial se llama la función recursiva para completar la tabla
         self.procesarNodo(nodoInicial, tablaTransicion, tabla)
 
@@ -53,5 +55,39 @@ class Afd(AutomataFinito):
                 diccionarioAux[caracter] = ["S"]
             tabla["S"] = diccionarioAux
         
-        print(tabla)
         return tabla
+    
+    def caracterEstaEnAlfabeto(self, caracter):
+        #Recorre la lista
+        for c in E:
+            if (caracter == c):
+                return True
+        else:
+            return False
+
+    #Funcion que entrega un true si la palabra se puede comparar con el lenguaje y false si no
+    def palabraEsComparable(self, palabra):
+        for letra in palabra:
+            if (self.caracterEstaEnAlfabeto(letra) != True):
+                return False
+        return True
+
+        
+    def leer(self, palabra):
+        ########################################################################################
+        #POR MEJORAR (se esta obteniendo el inicio del diccionario, la clave, con trampita u.u)
+        clave = self.multinodoAEtiqueta(self.s)
+        auxnum = 0
+        if (self.palabraEsComparable(palabra)):
+            for letra in palabra:
+                aux = "".join(str(x) for x in afd[clave][letra])
+                if (aux != "S"):
+                    clave = aux
+                else:
+                    auxnum = 1
+                    print("La palabra NO pertenece al lenguaje")
+                    break
+            if (auxnum == 0):
+                print("La palabra pertenece al lenguaje")
+        else:
+            print ("La palabra NO pertenece al lenguaje")

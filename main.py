@@ -63,4 +63,5 @@ def main():
     menu()
 
 x = Afnd(K, E, S, F, L)
+x.mostrarQuintupla()
 z = Afd(x)
