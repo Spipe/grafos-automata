@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from AutomataFinito import AutomataFinito
-
+tabla={}
 class Afd(AutomataFinito):
     def __init__(self, afnd):
         AutomataFinito.__init__(self, afnd.K, afnd.S, afnd.s, afnd.F, afnd.d)
@@ -85,7 +85,7 @@ class Afd(AutomataFinito):
     
     def caracterEstaEnAlfabeto(self, caracter):
         #Recorre la lista
-        for c in E:
+        for c in self.S:
             if (caracter == c):
                 return True
         else:
@@ -106,7 +106,7 @@ class Afd(AutomataFinito):
         auxnum = 0
         if (self.palabraEsComparable(palabra)):
             for letra in palabra:
-                aux = "".join(str(x) for x in afd[clave][letra])
+                aux = "".join(str(x) for x in tabla[clave][letra])
                 if (aux != "S"):
                     clave = aux
                 else:
@@ -117,4 +117,3 @@ class Afd(AutomataFinito):
                 print("La palabra pertenece al lenguaje")
         else:
             print ("La palabra NO pertenece al lenguaje")
-

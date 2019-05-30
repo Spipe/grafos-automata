@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 class AutomataFinito:
@@ -39,17 +39,14 @@ class AutomataFinito:
     # Devuelve el nombre en string que recibe un nodo
     def multinodoAEtiqueta(self, multinodo):
         if type(multinodo) == list:
-            etiqueta = ''
+            etiqueta = ""
             for nodo in multinodo:
-                etiqueta += nodo
+                etiqueta += ''.join(nodo)
         else:
             etiqueta = multinodo
             if (etiqueta == ""):
                 etiqueta = "ε"
         return etiqueta
-
-    def mostrarConjuto(self, lista):
-        print("" + ", ".join(str(x) for x in a))
     
     def mostrarQuintupla(self):
         print("K = {" + ", ".join(self.multinodoAEtiqueta(x) for x in self.K) + "}")
