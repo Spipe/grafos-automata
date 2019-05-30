@@ -10,7 +10,7 @@ class AutomataFinito:
         self.d = d
 
     # Se toman dos listas y se comprueba que la segunda sea del tipo "lista" antes de agregarlo
-    def combinarListas(l1, l2):
+    def combinarListas(self, l1, l2):
         aux = l1
         if type(l2) == list:
             aux.extend(l2)
@@ -30,14 +30,14 @@ class AutomataFinito:
     # Devuelve una lista con los nodos que se ven unidos por un vacío al nodo de entrada
     def conexionesConVacio(self, nodo):
         nodosVacios = []
-        for tupla in self.L:
+        for tupla in self.d:
             if(nodo == tupla[0] and tupla[1] == ""):
-                nodosVacios = combinarListas(nodosVacios, tupla[2]) 
-                nodosVacios = combinarListas(nodosVacios, conexionesConVacio(self.L, tupla[2]))
+                nodosVacios = self.combinarListas(nodosVacios, tupla[2]) 
+                nodosVacios = self.combinarListas(nodosVacios, self.conexionesConVacio(tupla[2]))
         return nodosVacios
     
     # Devuelve el nombre en string que recibe un nodo
-    def multinodoAEtiqueta(multinodo):
+    def multinodoAEtiqueta(self, multinodo):
         etiqueta = ''
         for nodo in multinodo:
             etiqueta += nodo

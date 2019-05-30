@@ -20,53 +20,22 @@ class Afnd(AutomataFinito):
                         if caracter not in diccionario:
                             diccionario[caracter] = []
                         
-                        diccionario[caracter] = combinarListas(diccionario[caracter],tupla[2])
-                        diccionario[caracter] = combinarListas(diccionario[caracter], self.conexionesConVacio(lista, tupla[2]))
+                        diccionario[caracter] = self.combinarListas(diccionario[caracter], tupla[2])
+                        diccionario[caracter] = self.combinarListas(diccionario[caracter], self.conexionesConVacio(tupla[2]))
 
                 if (tupla[1] == ""):
                     aux = self.procesarNodo(lista, alfabeto, tupla[2])
                     for c, e in aux.items():
                         if c in diccionario:
-                            diccionario[c] = combinarListas(diccionario[c], e)
+                            diccionario[c] = self.combinarListas(diccionario[c], e)
                         else:
                             diccionario[c] = []
-                            diccionario[c] = combinarListas(diccionario[c], e)
+                            diccionario[c] = self.combinarListas(diccionario[c], e)
         return diccionario
 
-
-    # Se define el nodo inicial
-    def transformarAAfd(AFND, lista, nodo, alfabeto):
-        tabla = {}
-        nodoInicial = [nodo]
-        nodoInicial = combinarListas(nodoInicial, conexionesConVacio(lista, nodo))
-
-        #Teniendo el nodo inicial se llama la función recursiva para completar la tabla
-        etiqueta = etiquetas(nodoInicial)
-        procesarNodoAFD(nodoInicial, AFND, tabla)
-
-        haySumidero = False
-
-        #Se comprueba la existencia de cada carácter por nodo en el diccionario
-        for caracter in alfabeto:
-            for nodoAux in tabla:
-                if caracter not in tabla[nodoAux]:
-                    tabla[nodoAux][caracter] = ["S"]
-                    haySumidero = True
-        
-        #En caso de existir el sumidero, este se agrega
-        if haySumidero:
-            diccionarioAux = {}
-            for caracter in alfabeto:
-                diccionarioAux[caracter] = ["S"]
-            tabla["S"] = diccionarioAux
-        
-        return tabla
-
     def tablaDeTransicion(self):
-        print("Holadasdsa")
         tabla = {}
         for nodo in self.K:
             aux = self.procesarNodo(self.d, self.S, nodo)
             tabla[nodo] = aux
-            print(aux)
         return tabla

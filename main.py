@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from Afnd import Afnd
+from Afd import Afd
 
 ##Datos de prueba:
 
@@ -62,4 +63,4 @@ def main():
     menu()
 
 x = Afnd(K, E, S, F, L)
-print(x.tablaDeTransicion())
+z = Afd(x)
