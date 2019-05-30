@@ -38,13 +38,22 @@ class AutomataFinito:
     
     # Devuelve el nombre en string que recibe un nodo
     def multinodoAEtiqueta(self, multinodo):
-        etiqueta = ''
-        for nodo in multinodo:
-            etiqueta += nodo
+        if type(multinodo) == list:
+            etiqueta = ''
+            for nodo in multinodo:
+                etiqueta += nodo
+        else:
+            etiqueta = multinodo
+            if (etiqueta == ""):
+                etiqueta = "ε"
         return etiqueta
+
+    def mostrarConjuto(self, lista):
+        print("" + ", ".join(str(x) for x in a))
     
     def mostrarQuintupla(self):
-        
-        print("K: {")
-        print(self.K, sep=" ")
-        print("}")
+        print("K = {" + ", ".join(self.multinodoAEtiqueta(x) for x in self.K) + "}")
+        print("Σ = {" + ", ".join(self.multinodoAEtiqueta(x) for x in self.S) + "}")
+        print("S = {" + ", ".join(self.multinodoAEtiqueta(x) for x in self.s) + "}")
+        print("F = {" + ", ".join(self.multinodoAEtiqueta(x) for x in self.F) + "}")
+        print("δ = {" + "; ".join("(" + ", ".join(self.multinodoAEtiqueta(y) for y in x) + ")" for x in self.d) + "}")

@@ -65,3 +65,5 @@ def main():
 x = Afnd(K, E, S, F, L)
 x.mostrarQuintupla()
 z = Afd(x)
+z.mostrarQuintupla()
+z.minimizar()

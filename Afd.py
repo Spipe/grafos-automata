@@ -6,13 +6,22 @@ from AutomataFinito import AutomataFinito
 class Afd(AutomataFinito):
     def __init__(self, afnd):
         AutomataFinito.__init__(self, afnd.K, afnd.S, afnd.s, afnd.F, afnd.d)
-        self.afndAAfd(afnd.tablaDeTransicion(), afnd.s[0])
+        self.afndAAfd(afnd.tablaDeTransicion(), afnd.s, afnd.F)
         #AutomataFinito.__init__(self, K, S, s, F, d)
 
     # Se crea un elemento de la tabla comenzando por la etiqueta
-    def procesarNodo(self, nodo, AFND, tabla):
+    def procesarNodo(self, nodo, AFND, tabla, finales):
         etiquetaNodo = self.multinodoAEtiqueta(nodo)
         tabla[etiquetaNodo] = {}
+
+        self.K = self.combinarListas(self.K, [nodo])
+
+        estaFinal = False
+        for final in finales:
+            if (final in nodo):
+                estaFinal = True
+        if (estaFinal):
+            self.F = self.combinarListas(self.F, [nodo])
 
         #Por cada elemento que componga el nodo, se recorre AFND para crear los conjuntos
         #de nodos a los que se puedan conectar mediante el alfabeto
@@ -25,19 +34,26 @@ class Afd(AutomataFinito):
                 tabla[etiquetaNodo][caracter] = self.combinarListas(tabla[etiquetaNodo][caracter], AFND[elemento][caracter])
                 etiqueta = self.multinodoAEtiqueta(tabla[etiquetaNodo][caracter])
                 if etiqueta not in tabla:
-                    self.procesarNodo(tabla[etiquetaNodo][caracter], AFND, tabla)
+                    self.procesarNodo(tabla[etiquetaNodo][caracter], AFND, tabla, finales)
         return tabla
     
         # Se define el nodo inicial
-    def afndAAfd(self, tablaTransicion, nodoInicialAfnd):
+    def afndAAfd(self, tablaTransicion, nodosInicialesAfnd, nodosFinalesAfnd):
         tabla = {}
-        nodoInicial = [nodoInicialAfnd]
-        nodoInicial = self.combinarListas(nodoInicial, self.conexionesConVacio(nodoInicialAfnd))
+        nodoInicial = []
 
-        self.s = nodoInicial
+        self.F = []
+        self.K = []
+
+        for nodo in nodosInicialesAfnd:
+            nodoInicial.append(nodo)
+            nodoInicial = self.combinarListas(nodoInicial, self.conexionesConVacio(nodo))
+
+        self.s = [nodoInicial]
+
 
         #Teniendo el nodo inicial se llama la función recursiva para completar la tabla
-        self.procesarNodo(nodoInicial, tablaTransicion, tabla)
+        self.procesarNodo(nodoInicial, tablaTransicion, tabla, nodosFinalesAfnd)
 
         haySumidero = False
 
@@ -55,7 +71,17 @@ class Afd(AutomataFinito):
                 diccionarioAux[caracter] = ["S"]
             tabla["S"] = diccionarioAux
         
-        return tabla
+        self.tabla = tabla
+        self.d = self.diccionarioATuplas(tabla)
+
+    def diccionarioATuplas(self, diccionario):
+        lista = []
+        for k1 in diccionario.keys():
+            for k2 in diccionario[k1].keys():
+                tupla = (k1, k2, diccionario[k1][k2])
+                lista.append(tupla)
+        return lista
+                
     
     def caracterEstaEnAlfabeto(self, caracter):
         #Recorre la lista
@@ -91,3 +117,4 @@ class Afd(AutomataFinito):
                 print("La palabra pertenece al lenguaje")
         else:
             print ("La palabra NO pertenece al lenguaje")
+
