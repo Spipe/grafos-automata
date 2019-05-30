@@ -1,1 +1,1 @@
-# grafos-automata
+# Tarea 2: Automatas Finitos
