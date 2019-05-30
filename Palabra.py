@@ -60,4 +60,4 @@ def recorrido(palabra):
         print ("La palabra NO pertenece al lenguaje")
 
 
-recorrido("aabaabab")
+recorrido("aabaaba")
